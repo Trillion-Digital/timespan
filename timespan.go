@@ -22,6 +22,7 @@ const (
 type Period string
 
 const (
+	Custom    Period = "custom"
 	Week      Period = "week"
 	HalfMonth Period = "halfmonth"
 	Month     Period = "month"
