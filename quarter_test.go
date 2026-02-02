@@ -3,7 +3,8 @@ package timespan_test
 import (
 	"testing"
 	"time"
-	"timespan/timespan"
+
+	"github.com/Trillion-Digital/timespan"
 )
 
 func TestNewQuarterWindowStartingOn(t *testing.T) {

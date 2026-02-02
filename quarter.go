@@ -9,6 +9,12 @@ type QuarterWindow struct {
 	shouldBeLastDay bool
 }
 
+func (q *QuarterWindow) Index() int {
+	_, m, _ := q.end.Date()
+
+	return int(m / 3)
+}
+
 func (q *QuarterWindow) Start() time.Time { return q.start }
 func (q *QuarterWindow) End() time.Time   { return q.end }
 

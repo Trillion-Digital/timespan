@@ -8,6 +8,10 @@ type YearlyWindow struct {
 	anchor Anchor
 }
 
+func (y *YearlyWindow) Index() int {
+	return 1
+}
+
 func (y *YearlyWindow) Start() time.Time { return y.start }
 func (y *YearlyWindow) End() time.Time   { return y.end }
 

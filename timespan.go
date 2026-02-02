@@ -45,6 +45,7 @@ type Window interface {
 	Complete() Window
 	Next(s ...Step) Window
 	Prev(s ...Step) Window
+	Index() int
 }
 
 func WindowEndingOn(period Period, t time.Time) Window {

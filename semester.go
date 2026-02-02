@@ -9,6 +9,15 @@ type SemesterWindow struct {
 	shouldBeLastDay bool
 }
 
+func (s *SemesterWindow) Index() int {
+	_, m, _ := s.end.Date()
+
+	if m <= 6 {
+		return 0
+	}
+	return 1
+}
+
 func (s *SemesterWindow) Start() time.Time { return s.start }
 func (s *SemesterWindow) End() time.Time   { return s.end }
 

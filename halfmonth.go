@@ -9,6 +9,14 @@ type HalfMonthWindow struct {
 	shouldBeLastDay bool
 }
 
+func (h *HalfMonthWindow) Index() int {
+	if h.end.Day() >= 16 {
+		return 1
+	}
+
+	return 0
+}
+
 func (h *HalfMonthWindow) Start() time.Time { return h.start }
 func (h *HalfMonthWindow) End() time.Time   { return h.end }
 

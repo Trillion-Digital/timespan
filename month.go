@@ -9,6 +9,10 @@ type MonthlyWindow struct {
 	shouldBeLastDay bool
 }
 
+func (m *MonthlyWindow) Index() int {
+	return int(m.end.Month())
+}
+
 func (m *MonthlyWindow) Start() time.Time { return m.start }
 func (m *MonthlyWindow) End() time.Time   { return m.end }
 
