@@ -2,14 +2,14 @@ package timespan
 
 import "time"
 
-type SemesterWindow struct {
+type HalfYearWindow struct {
 	start           time.Time
 	end             time.Time
 	anchor          Anchor
 	shouldBeLastDay bool
 }
 
-func (s *SemesterWindow) Index() int {
+func (s *HalfYearWindow) Index() int {
 	_, m, _ := s.end.Date()
 
 	if m <= 6 {
@@ -18,11 +18,11 @@ func (s *SemesterWindow) Index() int {
 	return 1
 }
 
-func (s *SemesterWindow) Start() time.Time { return s.start }
-func (s *SemesterWindow) End() time.Time   { return s.end }
+func (s *HalfYearWindow) Start() time.Time { return s.start }
+func (s *HalfYearWindow) End() time.Time   { return s.end }
 
 func NewSemesterWindowStartingOn(t time.Time) Window {
-	return &SemesterWindow{
+	return &HalfYearWindow{
 		start:           truncateToDay(t),
 		end:             semesterEnd(t),
 		anchor:          StartAnchor,
@@ -31,7 +31,7 @@ func NewSemesterWindowStartingOn(t time.Time) Window {
 }
 
 func NewSemesterWindowEndingOn(t time.Time) Window {
-	return &SemesterWindow{
+	return &HalfYearWindow{
 		start:           semesterStart(t),
 		end:             truncateToDay(t),
 		anchor:          EndAnchor,
@@ -39,7 +39,7 @@ func NewSemesterWindowEndingOn(t time.Time) Window {
 	}
 }
 
-func (s *SemesterWindow) Next(st ...Step) Window {
+func (s *HalfYearWindow) Next(st ...Step) Window {
 	if step, ok := GetFirst(st); ok && step == StepYear {
 		return s.shift(12)
 	}
@@ -47,7 +47,7 @@ func (s *SemesterWindow) Next(st ...Step) Window {
 	return s.shift(6)
 }
 
-func (s *SemesterWindow) Prev(st ...Step) Window {
+func (s *HalfYearWindow) Prev(st ...Step) Window {
 	if step, ok := GetFirst(st); ok && step == StepYear {
 		return s.shift(-12)
 	}
@@ -55,7 +55,7 @@ func (s *SemesterWindow) Prev(st ...Step) Window {
 	return s.shift(-6)
 }
 
-func (s *SemesterWindow) shift(months int) Window {
+func (s *HalfYearWindow) shift(months int) Window {
 	ref := s.end
 	if s.anchor == StartAnchor {
 		ref = s.start
@@ -75,13 +75,13 @@ func (s *SemesterWindow) shift(months int) Window {
 	}
 }
 
-func (s *SemesterWindow) Complete() Window {
+func (s *HalfYearWindow) Complete() Window {
 	ref := s.end
 	if s.anchor == StartAnchor {
 		ref = s.start
 	}
 
-	return &SemesterWindow{
+	return &HalfYearWindow{
 		start:           semesterStart(ref),
 		end:             semesterEnd(ref),
 		anchor:          s.anchor,

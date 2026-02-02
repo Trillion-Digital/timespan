@@ -24,7 +24,7 @@ func TestNewYearlyWindowStartingOn(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := timespan.NewYearlyWindowStartingOn(tt.input)
+			got := timespan.NewYearWindowStartingOn(tt.input)
 
 			assertWindow(
 				t,
@@ -59,7 +59,7 @@ func TestNewYearlyWindowEndingOn(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := timespan.NewYearlyWindowEndingOn(tt.input)
+			got := timespan.NewYearWindowEndingOn(tt.input)
 
 			assertWindow(
 				t,
@@ -84,21 +84,21 @@ func TestYearlyWindow_Next(t *testing.T) {
 			input:     mustDate(t, "2026-03-15"),
 			wantStart: "2027-01-01",
 			wantEnd:   "2027-03-15",
-			fn:        timespan.NewYearlyWindowEndingOn,
+			fn:        timespan.NewYearWindowEndingOn,
 		},
 		{
 			name:      "ending last day moves to full next year",
 			input:     mustDate(t, "2026-12-31"),
 			wantStart: "2027-01-01",
 			wantEnd:   "2027-12-31",
-			fn:        timespan.NewYearlyWindowEndingOn,
+			fn:        timespan.NewYearWindowEndingOn,
 		},
 		{
 			name:      "starting mid year moves start forward",
 			input:     mustDate(t, "2026-03-15"),
 			wantStart: "2027-03-15",
 			wantEnd:   "2027-12-31",
-			fn:        timespan.NewYearlyWindowStartingOn,
+			fn:        timespan.NewYearWindowStartingOn,
 		},
 	}
 
@@ -130,21 +130,21 @@ func TestYearlyWindow_Prev(t *testing.T) {
 			input:     mustDate(t, "2026-03-15"),
 			wantStart: "2025-01-01",
 			wantEnd:   "2025-03-15",
-			fn:        timespan.NewYearlyWindowEndingOn,
+			fn:        timespan.NewYearWindowEndingOn,
 		},
 		{
 			name:      "ending last day moves to full previous year",
 			input:     mustDate(t, "2026-12-31"),
 			wantStart: "2025-01-01",
 			wantEnd:   "2025-12-31",
-			fn:        timespan.NewYearlyWindowEndingOn,
+			fn:        timespan.NewYearWindowEndingOn,
 		},
 		{
 			name:      "starting mid year moves start back",
 			input:     mustDate(t, "2026-03-15"),
 			wantStart: "2025-03-15",
 			wantEnd:   "2025-12-31",
-			fn:        timespan.NewYearlyWindowStartingOn,
+			fn:        timespan.NewYearWindowStartingOn,
 		},
 	}
 
@@ -176,14 +176,14 @@ func TestYearlyWindow_Complete(t *testing.T) {
 			input:     mustDate(t, "2026-03-15"),
 			wantStart: "2026-01-01",
 			wantEnd:   "2026-12-31",
-			fn:        timespan.NewYearlyWindowEndingOn,
+			fn:        timespan.NewYearWindowEndingOn,
 		},
 		{
 			name:      "starting mid year completes to full year",
 			input:     mustDate(t, "2026-03-15"),
 			wantStart: "2026-01-01",
 			wantEnd:   "2026-12-31",
-			fn:        timespan.NewYearlyWindowStartingOn,
+			fn:        timespan.NewYearWindowStartingOn,
 		},
 	}
 

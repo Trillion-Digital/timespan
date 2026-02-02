@@ -20,35 +20,35 @@ func TestMonthlyWindow_Next(t *testing.T) {
 			input:     mustDate(t, "2026-01-15"),
 			wantStart: "2026-02-01",
 			wantEnd:   "2026-02-15",
-			fn:        timespan.NewMonthlyWindowEndingOn,
+			fn:        timespan.NewMonthWindowEndingOn,
 		},
 		{
 			name:      "end on 31 clamps to feb and snaps back",
 			input:     mustDate(t, "2026-01-31"),
 			wantStart: "2026-02-01",
 			wantEnd:   "2026-02-28",
-			fn:        timespan.NewMonthlyWindowEndingOn,
+			fn:        timespan.NewMonthWindowEndingOn,
 		},
 		{
 			name:      "feb last day snaps back to march 31",
 			input:     mustDate(t, "2026-02-28"),
 			wantStart: "2026-03-01",
 			wantEnd:   "2026-03-31",
-			fn:        timespan.NewMonthlyWindowEndingOn,
+			fn:        timespan.NewMonthWindowEndingOn,
 		},
 		{
 			name:      "feb mid day goes to to mid march on last day",
 			input:     mustDate(t, "2026-02-15"),
 			wantStart: "2026-03-15",
 			wantEnd:   "2026-03-31",
-			fn:        timespan.NewMonthlyWindowStartingOn,
+			fn:        timespan.NewMonthWindowStartingOn,
 		},
 		{
 			name:      "feb last day goes march to jan on last day",
 			input:     mustDate(t, "2026-02-28"),
 			wantStart: "2026-03-31",
 			wantEnd:   "2026-03-31",
-			fn:        timespan.NewMonthlyWindowStartingOn,
+			fn:        timespan.NewMonthWindowStartingOn,
 		},
 	}
 
@@ -80,35 +80,35 @@ func TestMonthlyWindow_Prev(t *testing.T) {
 			input:     mustDate(t, "2026-03-15"),
 			wantStart: "2026-02-01",
 			wantEnd:   "2026-02-15",
-			fn:        timespan.NewMonthlyWindowEndingOn,
+			fn:        timespan.NewMonthWindowEndingOn,
 		},
 		{
 			name:      "end on 31 goes back to feb last day",
 			input:     mustDate(t, "2026-03-31"),
 			wantStart: "2026-02-01",
 			wantEnd:   "2026-02-28",
-			fn:        timespan.NewMonthlyWindowEndingOn,
+			fn:        timespan.NewMonthWindowEndingOn,
 		},
 		{
 			name:      "feb last day goes back to jan 31",
 			input:     mustDate(t, "2026-02-28"),
 			wantStart: "2026-01-01",
 			wantEnd:   "2026-01-31",
-			fn:        timespan.NewMonthlyWindowEndingOn,
+			fn:        timespan.NewMonthWindowEndingOn,
 		},
 		{
 			name:      "feb mid day goes back to mid jan on last day",
 			input:     mustDate(t, "2026-02-15"),
 			wantStart: "2026-01-15",
 			wantEnd:   "2026-01-31",
-			fn:        timespan.NewMonthlyWindowStartingOn,
+			fn:        timespan.NewMonthWindowStartingOn,
 		},
 		{
 			name:      "feb last day goes back to jan on last day",
 			input:     mustDate(t, "2026-02-28"),
 			wantStart: "2026-01-31",
 			wantEnd:   "2026-01-31",
-			fn:        timespan.NewMonthlyWindowStartingOn,
+			fn:        timespan.NewMonthWindowStartingOn,
 		},
 	}
 
@@ -150,7 +150,7 @@ func TestMonthlyWindow_Complete(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			w := timespan.NewMonthlyWindowEndingOn(tt.input)
+			w := timespan.NewMonthWindowEndingOn(tt.input)
 			got := w.Complete()
 
 			assertWindow(
@@ -165,7 +165,7 @@ func TestMonthlyWindow_Complete(t *testing.T) {
 
 func TestNewMonthlyWindowStartingOn(t *testing.T) {
 	t.Run("starting mid month", func(t *testing.T) {
-		got := timespan.NewMonthlyWindowStartingOn(mustDate(t, "2026-01-10"))
+		got := timespan.NewMonthWindowStartingOn(mustDate(t, "2026-01-10"))
 
 		assertWindow(
 			t,
@@ -178,7 +178,7 @@ func TestNewMonthlyWindowStartingOn(t *testing.T) {
 
 func TestNewMonthlyWindowEndingOn(t *testing.T) {
 	t.Run("ending mid month", func(t *testing.T) {
-		got := timespan.NewMonthlyWindowEndingOn(mustDate(t, "2026-01-10"))
+		got := timespan.NewMonthWindowEndingOn(mustDate(t, "2026-01-10"))
 
 		assertWindow(
 			t,
@@ -189,7 +189,7 @@ func TestNewMonthlyWindowEndingOn(t *testing.T) {
 	})
 
 	t.Run("ending on last day", func(t *testing.T) {
-		got := timespan.NewMonthlyWindowEndingOn(mustDate(t, "2026-01-31"))
+		got := timespan.NewMonthWindowEndingOn(mustDate(t, "2026-01-31"))
 
 		assertWindow(
 			t,

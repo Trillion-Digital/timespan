@@ -2,23 +2,23 @@ package timespan
 
 import "time"
 
-type MonthlyWindow struct {
+type MonthWindow struct {
 	start           time.Time
 	end             time.Time
 	anchor          Anchor
 	shouldBeLastDay bool
 }
 
-func (m *MonthlyWindow) Index() int {
+func (m *MonthWindow) Index() int {
 	return int(m.end.Month())
 }
 
-func (m *MonthlyWindow) Start() time.Time { return m.start }
-func (m *MonthlyWindow) End() time.Time   { return m.end }
+func (m *MonthWindow) Start() time.Time { return m.start }
+func (m *MonthWindow) End() time.Time   { return m.end }
 
 // ----- core navigation -----
 
-func (m *MonthlyWindow) Next(s ...Step) Window {
+func (m *MonthWindow) Next(s ...Step) Window {
 	if step, ok := GetFirst(s); ok && step == StepYear {
 		return m.shift(12)
 	}
@@ -26,7 +26,7 @@ func (m *MonthlyWindow) Next(s ...Step) Window {
 	return m.shift(1)
 }
 
-func (m *MonthlyWindow) Prev(s ...Step) Window {
+func (m *MonthWindow) Prev(s ...Step) Window {
 	if step, ok := GetFirst(s); ok && step == StepYear {
 		return m.shift(-12)
 	}
@@ -34,7 +34,7 @@ func (m *MonthlyWindow) Prev(s ...Step) Window {
 	return m.shift(-1)
 }
 
-func (m *MonthlyWindow) shift(delta int) Window {
+func (m *MonthWindow) shift(delta int) Window {
 	ref := m.end
 	if m.anchor == StartAnchor {
 		ref = m.start
@@ -48,22 +48,22 @@ func (m *MonthlyWindow) shift(delta int) Window {
 
 	switch m.anchor {
 	case StartAnchor:
-		return NewMonthlyWindowStartingOn(ref)
+		return NewMonthWindowStartingOn(ref)
 	default:
-		return NewMonthlyWindowEndingOn(ref)
+		return NewMonthWindowEndingOn(ref)
 	}
 }
 
 // ----- projection -----
 
-func (m *MonthlyWindow) Complete() Window {
+func (m *MonthWindow) Complete() Window {
 	y, mo, _ := m.end.Date()
 	loc := m.end.Location()
 
 	start := time.Date(y, mo, 1, 0, 0, 0, 0, loc)
 	end := time.Date(y, mo+1, 0, 0, 0, 0, 0, loc)
 
-	return &MonthlyWindow{
+	return &MonthWindow{
 		start:           start,
 		end:             end,
 		anchor:          m.anchor,
@@ -73,13 +73,13 @@ func (m *MonthlyWindow) Complete() Window {
 
 // ----- constructors -----
 
-func NewMonthlyWindowStartingOn(t time.Time) Window {
+func NewMonthWindowStartingOn(t time.Time) Window {
 	y, m, _ := t.Date()
 	loc := t.Location()
 
 	end := time.Date(y, m+1, 0, 0, 0, 0, 0, loc)
 
-	return &MonthlyWindow{
+	return &MonthWindow{
 		start:           truncateToDay(t),
 		end:             end,
 		anchor:          StartAnchor,
@@ -87,13 +87,13 @@ func NewMonthlyWindowStartingOn(t time.Time) Window {
 	}
 }
 
-func NewMonthlyWindowEndingOn(t time.Time) Window {
+func NewMonthWindowEndingOn(t time.Time) Window {
 	y, m, _ := t.Date()
 	loc := t.Location()
 
 	start := time.Date(y, m, 1, 0, 0, 0, 0, loc)
 
-	return &MonthlyWindow{
+	return &MonthWindow{
 		start:           start,
 		end:             truncateToDay(t),
 		anchor:          EndAnchor,

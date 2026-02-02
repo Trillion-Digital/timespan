@@ -5,19 +5,28 @@ import (
 	"time"
 )
 
-type Step int
-
-const (
-	StepPeriod Step = iota
-	StepYear
-)
-
 type Anchor int
 
 const (
 	StartAnchor Anchor = 0
 	EndAnchor   Anchor = 1
 )
+
+type Step int
+
+const (
+	StepMonth Step = iota
+	StepYear
+)
+
+func (p Step) Valid() bool {
+	switch p {
+	case StepMonth, StepYear:
+		return true
+	default:
+		return false
+	}
+}
 
 type Period string
 
@@ -70,6 +79,18 @@ func Days(w Window) iter.Seq[time.Time] {
 			start = start.AddDate(0, 0, 1)
 		}
 	}
+}
+
+func Contains(w Window, t time.Time) bool {
+	return !t.Before(w.Start()) && !t.After(w.End())
+}
+
+func ContainsRange(w Window, start, end time.Time) bool {
+	if end.Before(start) {
+		return false
+	}
+
+	return !start.Before(w.Start()) && !end.After(w.End())
 }
 
 func truncateToDay(t time.Time) time.Time {

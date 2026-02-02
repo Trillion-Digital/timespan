@@ -18,17 +18,29 @@ func (c *CustomWindow) Start() time.Time { return c.start }
 func (c *CustomWindow) End() time.Time   { return c.end }
 
 func (c *CustomWindow) Next(s ...Step) Window {
-	if step, ok := GetFirst(s); ok && step == StepYear {
-		return c.shift(12)
+	step, ok := GetFirst(s)
+	if ok {
+		switch step {
+		case StepYear:
+			return c.shift(12)
+		case StepMonth:
+			return c.shift(1)
+		}
 	}
-	return c.shift(1)
+	return c.shiftByDuration(1)
 }
 
 func (c *CustomWindow) Prev(s ...Step) Window {
-	if step, ok := GetFirst(s); ok && step == StepYear {
-		return c.shift(-12)
+	step, ok := GetFirst(s)
+	if ok {
+		switch step {
+		case StepYear:
+			return c.shift(-12)
+		case StepMonth:
+			return c.shift(-1)
+		}
 	}
-	return c.shift(-1)
+	return c.shiftByDuration(-1)
 }
 
 func (c *CustomWindow) shift(months int) Window {
@@ -56,6 +68,21 @@ func (c *CustomWindow) shift(months int) Window {
 
 func (c *CustomWindow) Complete() Window {
 	return c
+}
+
+func (c *CustomWindow) shiftByDuration(delta int) Window {
+	d := c.duration * time.Duration(delta)
+
+	start := c.start.Add(d)
+	end := c.end.Add(d)
+
+	return &CustomWindow{
+		start:                start,
+		end:                  end,
+		duration:             c.duration,
+		shouldStartBeLastDay: c.shouldStartBeLastDay,
+		shouldEndBeLastDay:   c.shouldEndBeLastDay,
+	}
 }
 
 func NewCustomWindow(start, end time.Time) Window {

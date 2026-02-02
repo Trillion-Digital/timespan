@@ -17,17 +17,29 @@ func (w *WeekWindow) Start() time.Time { return w.start }
 func (w *WeekWindow) End() time.Time   { return w.end }
 
 func (w *WeekWindow) Next(s ...Step) Window {
-	if step, ok := GetFirst(s); ok && step == StepYear {
-		return w.shift(12)
+	step, ok := GetFirst(s)
+	if ok {
+		switch step {
+		case StepYear:
+			return w.shift(-12)
+		case StepMonth:
+			return w.shift(-1)
+		}
 	}
-	return w.shift(1)
+	return w.shiftWeek(1)
 }
 
 func (w *WeekWindow) Prev(s ...Step) Window {
-	if step, ok := GetFirst(s); ok && step == StepYear {
-		return w.shift(-12)
+	step, ok := GetFirst(s)
+	if ok {
+		switch step {
+		case StepYear:
+			return w.shift(-12)
+		case StepMonth:
+			return w.shift(-1)
+		}
 	}
-	return w.shift(-1)
+	return w.shiftWeek(-1)
 }
 
 func (w *WeekWindow) Complete() Window {
@@ -147,5 +159,25 @@ func weekIndex(t time.Time) int {
 		return 2
 	default:
 		return 3
+	}
+}
+
+func (w *WeekWindow) shiftWeek(delta int) Window {
+	ref := w.end
+	if w.anchor == StartAnchor {
+		ref = w.start
+	}
+
+	ref = ref.AddDate(0, 0, 7*delta)
+
+	if w.anchor == EndAnchor && w.shouldBeLastDay {
+		ref = weekEnd(ref)
+	}
+
+	switch w.anchor {
+	case StartAnchor:
+		return NewWeekWindowStartingOn(ref)
+	default:
+		return NewWeekWindowEndingOn(ref)
 	}
 }
