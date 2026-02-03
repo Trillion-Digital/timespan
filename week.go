@@ -14,7 +14,19 @@ func (w *WeekWindow) Index() int {
 }
 
 func (w *WeekWindow) Start() time.Time { return w.start }
-func (w *WeekWindow) End() time.Time   { return w.end }
+func (w *WeekWindow) SetStart(t time.Time) {
+	if w.anchor == StartAnchor {
+		w.shouldBeLastDay = isLastDayOfMonth(t)
+	}
+	w.start = t
+}
+func (w *WeekWindow) End() time.Time { return w.end }
+func (w *WeekWindow) SetEnd(t time.Time) {
+	if w.anchor == EndAnchor {
+		w.shouldBeLastDay = isLastDayOfMonth(t)
+	}
+	w.end = t
+}
 
 func (w *WeekWindow) Next(s ...Step) Window {
 	step, ok := GetFirst(s)
@@ -70,13 +82,13 @@ func (w *WeekWindow) shift(months int) Window {
 	loc := ref.Location()
 
 	switch week {
-	case 0:
-		ref = time.Date(y, m, ref.Day(), 0, 0, 0, 0, loc)
 	case 1:
 		ref = time.Date(y, m, ref.Day(), 0, 0, 0, 0, loc)
 	case 2:
 		ref = time.Date(y, m, ref.Day(), 0, 0, 0, 0, loc)
 	case 3:
+		ref = time.Date(y, m, ref.Day(), 0, 0, 0, 0, loc)
+	case 4:
 		last := time.Date(y, m+1, ref.Day(), 0, 0, 0, 0, loc).Day()
 		ref = time.Date(y, m, last, 0, 0, 0, 0, loc)
 	}
@@ -152,13 +164,13 @@ func weekIndex(t time.Time) int {
 	_, _, d := t.Date()
 	switch {
 	case d <= 7:
-		return 0
-	case d <= 14:
 		return 1
-	case d <= 21:
+	case d <= 14:
 		return 2
-	default:
+	case d <= 21:
 		return 3
+	default:
+		return 4
 	}
 }
 

@@ -13,7 +13,13 @@ func (y *YearWindow) Index() int {
 }
 
 func (y *YearWindow) Start() time.Time { return y.start }
-func (y *YearWindow) End() time.Time   { return y.end }
+func (y *YearWindow) SetStart(t time.Time) {
+	y.start = t
+}
+func (y *YearWindow) End() time.Time { return y.end }
+func (y *YearWindow) SetEnd(t time.Time) {
+	y.end = t
+}
 
 func (y *YearWindow) Next(s ...Step) Window {
 	return y.shift(1)

@@ -11,14 +11,27 @@ type HalfMonthWindow struct {
 
 func (h *HalfMonthWindow) Index() int {
 	if h.end.Day() >= 16 {
-		return 1
+		return 2
 	}
 
-	return 0
+	return 1
 }
 
 func (h *HalfMonthWindow) Start() time.Time { return h.start }
-func (h *HalfMonthWindow) End() time.Time   { return h.end }
+func (h *HalfMonthWindow) SetStart(t time.Time) {
+	h.start = t
+	if h.anchor == StartAnchor {
+		h.shouldBeLastDay = isLastDayOfMonth(t)
+	}
+}
+
+func (h *HalfMonthWindow) End() time.Time { return h.end }
+func (h *HalfMonthWindow) SetEnd(t time.Time) {
+	h.end = t
+	if h.anchor == EndAnchor {
+		h.shouldBeLastDay = isLastDayOfMonth(t)
+	}
+}
 
 func (h *HalfMonthWindow) Next(s ...Step) Window {
 	step, ok := GetFirst(s)

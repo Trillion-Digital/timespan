@@ -16,7 +16,20 @@ func (q *QuarterWindow) Index() int {
 }
 
 func (q *QuarterWindow) Start() time.Time { return q.start }
-func (q *QuarterWindow) End() time.Time   { return q.end }
+func (q *QuarterWindow) SetStart(t time.Time) {
+	if q.anchor == StartAnchor {
+		q.shouldBeLastDay = isLastDayOfMonth(t)
+	}
+	q.start = t
+}
+
+func (q *QuarterWindow) End() time.Time { return q.end }
+func (q *QuarterWindow) SetEnd(t time.Time) {
+	if q.anchor == EndAnchor {
+		q.shouldBeLastDay = isLastDayOfMonth(t)
+	}
+	q.end = t
+}
 
 func (q *QuarterWindow) Next(s ...Step) Window {
 	if step, ok := GetFirst(s); ok && step == StepYear {

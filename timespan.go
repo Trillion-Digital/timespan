@@ -12,11 +12,11 @@ const (
 	EndAnchor   Anchor = 1
 )
 
-type Step int
+type Step string
 
 const (
-	StepMonth Step = iota
-	StepYear
+	StepMonth Step = "month"
+	StepYear  Step = "year"
 )
 
 func (p Step) Valid() bool {
@@ -50,7 +50,9 @@ func (p Period) Valid() bool {
 }
 
 type Window interface {
+	SetStart(t time.Time)
 	Start() time.Time
+	SetEnd(t time.Time)
 	End() time.Time
 	Complete() Window
 	Next(s ...Step) Window
@@ -81,7 +83,15 @@ func Days(w Window) iter.Seq[time.Time] {
 	}
 }
 
-func Contains(w Window, t time.Time) bool {
+func ContainsWindow(w Window, v Window) bool {
+	if v.End().Before(w.Start()) {
+		return false
+	}
+
+	return !v.Start().Before(w.Start()) && !v.End().After(w.End())
+}
+
+func ContainsTime(w Window, t time.Time) bool {
 	return !t.Before(w.Start()) && !t.After(w.End())
 }
 

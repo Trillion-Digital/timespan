@@ -14,9 +14,20 @@ func (m *MonthWindow) Index() int {
 }
 
 func (m *MonthWindow) Start() time.Time { return m.start }
-func (m *MonthWindow) End() time.Time   { return m.end }
+func (m *MonthWindow) SetStart(t time.Time) {
+	m.start = t
+	if m.anchor == StartAnchor {
+		m.shouldBeLastDay = isLastDayOfMonth(t)
+	}
+}
 
-// ----- core navigation -----
+func (m *MonthWindow) End() time.Time { return m.end }
+func (m *MonthWindow) SetEnd(t time.Time) {
+	m.end = t
+	if m.anchor == EndAnchor {
+		m.shouldBeLastDay = isLastDayOfMonth(t)
+	}
+}
 
 func (m *MonthWindow) Next(s ...Step) Window {
 	if step, ok := GetFirst(s); ok && step == StepYear {
@@ -54,8 +65,6 @@ func (m *MonthWindow) shift(delta int) Window {
 	}
 }
 
-// ----- projection -----
-
 func (m *MonthWindow) Complete() Window {
 	y, mo, _ := m.end.Date()
 	loc := m.end.Location()
@@ -70,8 +79,6 @@ func (m *MonthWindow) Complete() Window {
 		shouldBeLastDay: true,
 	}
 }
-
-// ----- constructors -----
 
 func NewMonthWindowStartingOn(t time.Time) Window {
 	y, m, _ := t.Date()
@@ -100,8 +107,6 @@ func NewMonthWindowEndingOn(t time.Time) Window {
 		shouldBeLastDay: isLastDayOfMonth(t),
 	}
 }
-
-// ----- date helpers -----
 
 func shiftMonthClamp(t time.Time, delta int) time.Time {
 	y, m, d := t.Date()

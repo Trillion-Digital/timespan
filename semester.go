@@ -19,7 +19,19 @@ func (s *HalfYearWindow) Index() int {
 }
 
 func (s *HalfYearWindow) Start() time.Time { return s.start }
-func (s *HalfYearWindow) End() time.Time   { return s.end }
+func (s *HalfYearWindow) SetStart(t time.Time) {
+	s.start = t
+	if s.anchor == StartAnchor {
+		s.shouldBeLastDay = isLastDayOfMonth(t)
+	}
+}
+func (s *HalfYearWindow) End() time.Time { return s.end }
+func (s *HalfYearWindow) SetEnd(t time.Time) {
+	s.end = t
+	if s.anchor == EndAnchor {
+		s.shouldBeLastDay = isLastDayOfMonth(t)
+	}
+}
 
 func NewSemesterWindowStartingOn(t time.Time) Window {
 	return &HalfYearWindow{

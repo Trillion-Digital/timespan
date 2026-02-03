@@ -15,7 +15,16 @@ func (c *CustomWindow) Index() int {
 }
 
 func (c *CustomWindow) Start() time.Time { return c.start }
-func (c *CustomWindow) End() time.Time   { return c.end }
+func (c *CustomWindow) SetStart(t time.Time) {
+	c.start = t
+	c.shouldStartBeLastDay = isLastDayOfMonth(t)
+}
+
+func (c *CustomWindow) End() time.Time { return c.end }
+func (c *CustomWindow) SetEnd(t time.Time) {
+	c.end = t
+	c.shouldEndBeLastDay = isLastDayOfMonth(t)
+}
 
 func (c *CustomWindow) Next(s ...Step) Window {
 	step, ok := GetFirst(s)
