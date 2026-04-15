@@ -108,41 +108,80 @@ func TestWeekWindow_Next(t *testing.T) {
 		wantStart string
 		wantEnd   string
 		fn        func(time.Time) timespan.Window
+		useStep   bool
+		step      timespan.Step
 	}{
 		{
-			name:      "week 1 moves to week 1 next month",
+			name:      "default step moves one week for ending anchor",
+			input:     mustDate(t, "2026-03-05"),
+			wantStart: "2026-03-08",
+			wantEnd:   "2026-03-12",
+			fn:        timespan.NewWeekWindowEndingOn,
+		},
+		{
+			name:      "month step moves week 1 to next month",
 			input:     mustDate(t, "2026-03-05"),
 			wantStart: "2026-04-01",
 			wantEnd:   "2026-04-05",
 			fn:        timespan.NewWeekWindowEndingOn,
+			useStep:   true,
+			step:      timespan.StepMonth,
 		},
 		{
-			name:      "week 3 moves to week 3 next month",
+			name:      "month step moves week 3 to next month",
 			input:     mustDate(t, "2026-03-18"),
 			wantStart: "2026-04-15",
 			wantEnd:   "2026-04-18",
 			fn:        timespan.NewWeekWindowEndingOn,
+			useStep:   true,
+			step:      timespan.StepMonth,
 		},
 		{
-			name:      "week 4 preserves last-day intent",
+			name:      "month step preserves last-day intent",
 			input:     mustDate(t, "2026-01-31"),
 			wantStart: "2026-02-22",
 			wantEnd:   "2026-02-28",
 			fn:        timespan.NewWeekWindowEndingOn,
+			useStep:   true,
+			step:      timespan.StepMonth,
 		},
 		{
-			name:      "starting anchor moves start forward",
+			name:      "default step moves one week for starting anchor",
+			input:     mustDate(t, "2026-03-10"),
+			wantStart: "2026-03-17",
+			wantEnd:   "2026-03-21",
+			fn:        timespan.NewWeekWindowStartingOn,
+		},
+		{
+			name:      "month step moves starting anchor forward",
 			input:     mustDate(t, "2026-03-10"),
 			wantStart: "2026-04-10",
 			wantEnd:   "2026-04-14",
 			fn:        timespan.NewWeekWindowStartingOn,
+			useStep:   true,
+			step:      timespan.StepMonth,
+		},
+		{
+			name:      "year step moves to same week next year",
+			input:     mustDate(t, "2026-03-14"),
+			wantStart: "2027-03-08",
+			wantEnd:   "2027-03-14",
+			fn:        timespan.NewWeekWindowEndingOn,
+			useStep:   true,
+			step:      timespan.StepYear,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			w := tt.fn(tt.input)
-			got := w.Next()
+
+			var got timespan.Window
+			if tt.useStep {
+				got = w.Next(tt.step)
+			} else {
+				got = w.Next()
+			}
 
 			assertWindow(
 				t,
@@ -161,34 +200,71 @@ func TestWeekWindow_Prev(t *testing.T) {
 		wantStart string
 		wantEnd   string
 		fn        func(time.Time) timespan.Window
+		useStep   bool
+		step      timespan.Step
 	}{
 		{
-			name:      "week 2 moves to week 2 prev month",
+			name:      "default step moves one week back for ending anchor",
+			input:     mustDate(t, "2026-03-10"),
+			wantStart: "2026-03-01",
+			wantEnd:   "2026-03-03",
+			fn:        timespan.NewWeekWindowEndingOn,
+		},
+		{
+			name:      "month step moves week 2 to previous month",
 			input:     mustDate(t, "2026-03-10"),
 			wantStart: "2026-02-08",
 			wantEnd:   "2026-02-10",
 			fn:        timespan.NewWeekWindowEndingOn,
+			useStep:   true,
+			step:      timespan.StepMonth,
 		},
 		{
-			name:      "week 4 preserves last-day backwards",
+			name:      "month step preserves last-day backwards",
 			input:     mustDate(t, "2026-03-31"),
 			wantStart: "2026-02-22",
 			wantEnd:   "2026-02-28",
 			fn:        timespan.NewWeekWindowEndingOn,
+			useStep:   true,
+			step:      timespan.StepMonth,
 		},
 		{
-			name:      "starting anchor moves start back",
+			name:      "default step moves one week back for starting anchor",
+			input:     mustDate(t, "2026-03-18"),
+			wantStart: "2026-03-11",
+			wantEnd:   "2026-03-14",
+			fn:        timespan.NewWeekWindowStartingOn,
+		},
+		{
+			name:      "month step moves starting anchor back",
 			input:     mustDate(t, "2026-03-18"),
 			wantStart: "2026-02-18",
 			wantEnd:   "2026-02-21",
 			fn:        timespan.NewWeekWindowStartingOn,
+			useStep:   true,
+			step:      timespan.StepMonth,
+		},
+		{
+			name:      "year step moves to same week previous year",
+			input:     mustDate(t, "2026-03-14"),
+			wantStart: "2025-03-08",
+			wantEnd:   "2025-03-14",
+			fn:        timespan.NewWeekWindowEndingOn,
+			useStep:   true,
+			step:      timespan.StepYear,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			w := tt.fn(tt.input)
-			got := w.Prev()
+
+			var got timespan.Window
+			if tt.useStep {
+				got = w.Prev(tt.step)
+			} else {
+				got = w.Prev()
+			}
 
 			assertWindow(
 				t,
@@ -198,32 +274,6 @@ func TestWeekWindow_Prev(t *testing.T) {
 			)
 		})
 	}
-}
-
-func TestWeekWindow_Next_Year(t *testing.T) {
-	w := timespan.NewWeekWindowEndingOn(mustDate(t, "2026-03-14"))
-
-	got := w.Next(timespan.StepYear)
-
-	assertWindow(
-		t,
-		got,
-		mustDate(t, "2027-03-08"),
-		mustDate(t, "2027-03-14"),
-	)
-}
-
-func TestWeekWindow_Prev_Year(t *testing.T) {
-	w := timespan.NewWeekWindowEndingOn(mustDate(t, "2026-03-14"))
-
-	got := w.Prev(timespan.StepYear)
-
-	assertWindow(
-		t,
-		got,
-		mustDate(t, "2025-03-08"),
-		mustDate(t, "2025-03-14"),
-	)
 }
 
 func TestWeekWindow_Complete(t *testing.T) {

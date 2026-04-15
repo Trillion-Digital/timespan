@@ -33,9 +33,9 @@ func (w *WeekWindow) Next(s ...Step) Window {
 	if ok {
 		switch step {
 		case StepYear:
-			return w.shift(-12)
+			return w.shift(12)
 		case StepMonth:
-			return w.shift(-1)
+			return w.shift(1)
 		}
 	}
 	return w.shiftWeek(1)

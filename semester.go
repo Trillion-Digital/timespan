@@ -13,9 +13,9 @@ func (s *HalfYearWindow) Index() int {
 	_, m, _ := s.end.Date()
 
 	if m <= 6 {
-		return 0
+		return 1
 	}
-	return 1
+	return 2
 }
 
 func (s *HalfYearWindow) Start() time.Time { return s.start }

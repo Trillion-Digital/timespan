@@ -199,23 +199,3 @@ func TestNewMonthlyWindowEndingOn(t *testing.T) {
 		)
 	})
 }
-
-func mustDate(t *testing.T, s string) time.Time {
-	t.Helper()
-	d, err := time.Parse("2006-01-02", s)
-	if err != nil {
-		t.Fatalf("invalid date %q: %v", s, err)
-	}
-	return d
-}
-
-func assertWindow(t *testing.T, got timespan.Window, wantStart, wantEnd time.Time) {
-	t.Helper()
-
-	if !got.Start().Equal(wantStart) {
-		t.Errorf("start = %v, want %v", got.Start(), wantStart)
-	}
-	if !got.End().Equal(wantEnd) {
-		t.Errorf("end = %v, want %v", got.End(), wantEnd)
-	}
-}
