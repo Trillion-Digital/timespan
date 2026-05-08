@@ -1,6 +1,8 @@
 package timespan
 
-import "time"
+import (
+	"time"
+)
 
 type QuarterWindow struct {
 	start           time.Time
@@ -12,7 +14,16 @@ type QuarterWindow struct {
 func (q *QuarterWindow) Index() int {
 	_, m, _ := q.end.Date()
 
-	return int(m / 3)
+	switch {
+	case m <= 3:
+		return 1
+	case m <= 6:
+		return 2
+	case m <= 9:
+		return 3
+	default:
+		return 4
+	}
 }
 
 func (q *QuarterWindow) Start() time.Time { return q.start }
